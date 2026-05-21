@@ -37,6 +37,16 @@ As policies anon para `organizations`, `locations` e `students` existem apenas p
 
 Nunca coloque a `service_role` em arquivos do Vite, no navegador ou em variaveis publicas da Vercel. Ela deve ficar apenas em backend seguro, Edge Functions ou ambiente server-side. Se essa chave for exposta fora do ambiente controlado, gere uma nova no painel do Supabase antes de ir para producao.
 
+## Logins demo
+
+O demo local tem tres areas:
+
+- Admin Xbelt: `super@xbelt.com` / `xbelt123`
+- Gestor: `admin@xbelt.com` / `admin123`
+- Aluno: `marina@exemplo.com` / `aluno123`
+
+Essas credenciais sao apenas para demonstracao no frontend. Em producao, use Supabase Auth e a tabela `user_profiles` do schema para guardar o papel do usuario (`xbeltAdmin`, `admin`, `student`, etc.).
+
 ## Publicar na Vercel
 
 Build command:

@@ -1321,6 +1321,12 @@ textarea:focus {
   letter-spacing: 0;
 }
 
+.dashboard-userline {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-weight: 750;
+}
+
 .dashboard-content {
   display: grid;
   gap: 18px;
@@ -2013,7 +2019,8 @@ td span {
 }
 
 .student-sidebar nav button:first-child,
-.student-sidebar nav button:hover {
+.student-sidebar nav button:hover,
+.student-sidebar nav button.active {
   background: rgba(224, 49, 49, 0.08);
   color: var(--red);
 }
@@ -2756,6 +2763,191 @@ td span {
   color: var(--teal);
 }
 
+.login-page {
+  min-height: 100vh;
+  background:
+    linear-gradient(120deg, #08090c 0%, #111319 48%, #280b0f 100%);
+  color: #fff;
+  padding: clamp(18px, 4vw, 42px);
+}
+
+.login-brand {
+  color: #fff;
+}
+
+.login-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.72fr);
+  gap: clamp(24px, 5vw, 64px);
+  align-items: center;
+  min-height: calc(100vh - 110px);
+}
+
+.login-copy h1 {
+  margin: 12px 0;
+  font-size: clamp(3rem, 8vw, 6.6rem);
+  line-height: 0.92;
+  letter-spacing: 0;
+}
+
+.login-copy p,
+.login-form p {
+  color: rgba(255, 255, 255, 0.66);
+  line-height: 1.6;
+}
+
+.login-mode-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0;
+}
+
+.login-mode-tabs button,
+.credential-grid button {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  font-weight: 900;
+}
+
+.login-mode-tabs button {
+  min-height: 44px;
+  padding: 0 14px;
+}
+
+.login-mode-tabs button.active {
+  background: var(--red);
+  border-color: var(--red);
+}
+
+.credential-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.credential-grid button {
+  display: grid;
+  gap: 5px;
+  min-height: 112px;
+  padding: 14px;
+  text-align: left;
+}
+
+.credential-grid span,
+.credential-grid em {
+  color: rgba(255, 255, 255, 0.62);
+  font-style: normal;
+}
+
+.credential-grid em {
+  color: #ffb8b8;
+  font-weight: 900;
+}
+
+.login-form {
+  display: grid;
+  gap: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  background: #111319;
+  padding: clamp(22px, 4vw, 34px);
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.42);
+}
+
+.login-form h2 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.login-form input {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: #08090c;
+  color: #fff;
+}
+
+.login-page label {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.admin-console {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.lead-admin-list {
+  display: grid;
+  gap: 10px;
+}
+
+.lead-admin-list > div {
+  display: grid;
+  gap: 7px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  padding: 14px;
+}
+
+.lead-admin-list span {
+  color: var(--muted);
+}
+
+.lead-admin-list em {
+  width: max-content;
+  border-radius: 999px;
+  background: rgba(224, 49, 49, 0.12);
+  color: var(--red-dark);
+  padding: 6px 9px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.lead-admin-list button,
+.table-action {
+  width: max-content;
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-strong);
+  color: var(--ink);
+  padding: 0 10px;
+  font-weight: 900;
+}
+
+.admin-ops-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin-ops-grid p {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.module-feedback {
+  width: max-content;
+  max-width: 100%;
+  border-radius: var(--radius);
+  background: rgba(22, 160, 133, 0.1);
+  color: #08755f;
+  padding: 10px 12px;
+  font-weight: 900;
+}
+
+.module-action {
+  width: max-content;
+}
+
+.portal-muted-panel {
+  opacity: 0.5;
+}
+
 @media (max-width: 1180px) {
   .hero-section,
   .feature-showcase,
@@ -2872,6 +3064,11 @@ td span {
     grid-template-columns: 1fr;
   }
 
+  .admin-console,
+  .login-shell {
+    grid-template-columns: 1fr;
+  }
+
   .student-portal {
     grid-template-columns: 1fr;
   }
@@ -2930,11 +3127,16 @@ td span {
   .segment-grid,
   .reports-grid,
   .schema-list,
+  .admin-ops-grid,
   .platform-grid,
   .pricing-grid,
   .organization-grid,
   .student-metrics,
   .student-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .credential-grid {
     grid-template-columns: 1fr;
   }
 

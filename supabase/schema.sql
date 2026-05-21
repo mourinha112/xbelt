@@ -9,6 +9,16 @@ create table if not exists organizations (
   email text,
   phone text,
   units_count integer not null default 1,
+  status text not null default 'Trial',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists user_profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  organization_id uuid references organizations(id) on delete set null,
+  full_name text not null,
+  role text not null check (role in ('xbeltAdmin', 'admin', 'manager', 'coach', 'reception', 'student')),
+  student_id uuid,
   created_at timestamptz not null default now()
 );
 
@@ -167,7 +177,18 @@ create table if not exists support_tickets (
   created_at timestamptz not null default now()
 );
 
+create table if not exists subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references organizations(id) on delete cascade,
+  plan_name text not null default 'Start',
+  monthly_amount numeric(10, 2) not null default 149.00,
+  status text not null default 'trial',
+  started_at timestamptz not null default now(),
+  renews_at timestamptz
+);
+
 alter table organizations enable row level security;
+alter table user_profiles enable row level security;
 alter table locations enable row level security;
 alter table staff_members enable row level security;
 alter table demo_leads enable row level security;
@@ -182,6 +203,7 @@ alter table workout_assignments enable row level security;
 alter table physical_assessments enable row level security;
 alter table sales_leads enable row level security;
 alter table support_tickets enable row level security;
+alter table subscriptions enable row level security;
 
 create policy "demo leads can be created publicly"
   on demo_leads for insert
@@ -195,6 +217,12 @@ create policy "authenticated users can read demo leads"
 
 create policy "authenticated users can manage organizations"
   on organizations for all
+  to authenticated
+  using (true)
+  with check (true);
+
+create policy "authenticated users can manage profiles"
+  on user_profiles for all
   to authenticated
   using (true)
   with check (true);
@@ -288,6 +316,12 @@ create policy "authenticated users can manage sales leads"
 
 create policy "authenticated users can manage support tickets"
   on support_tickets for all
+  to authenticated
+  using (true)
+  with check (true);
+
+create policy "authenticated users can manage subscriptions"
+  on subscriptions for all
   to authenticated
   using (true)
   with check (true);

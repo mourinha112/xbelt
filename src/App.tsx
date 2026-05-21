@@ -72,7 +72,9 @@ import {
   type StudentPayload,
 } from './lib/supabase';
 
-type Page = 'marketing' | 'dashboard' | 'studentPortal';
+type Page = 'marketing' | 'login' | 'xbeltAdmin' | 'dashboard' | 'studentPortal';
+type UserRole = 'xbeltAdmin' | 'admin' | 'student';
+type LoginMode = UserRole;
 type ModuleKey =
   | 'overview'
   | 'academy'
@@ -122,6 +124,23 @@ type Student = {
   checkins: number;
   nextClass: string;
   revenue: string;
+};
+
+type DemoAccount = {
+  role: UserRole;
+  name: string;
+  email: string;
+  password: string;
+  organizationId: string;
+  studentEmail?: string;
+};
+
+type DemoSession = Omit<DemoAccount, 'password'>;
+
+type LeadRecord = DemoLead & {
+  id: string;
+  status: 'Novo' | 'Contato feito' | 'Demo agendada' | 'Convertido';
+  createdAt: string;
 };
 
 type FeatureTab = {
@@ -380,6 +399,71 @@ const initialStudents: Student[] = [
     checkins: 6,
     nextClass: 'Qua, 19:00',
     revenue: 'R$ 189',
+  },
+];
+
+const demoAccounts: DemoAccount[] = [
+  {
+    role: 'xbeltAdmin',
+    name: 'Admin Xbelt',
+    email: 'super@xbelt.com',
+    password: 'xbelt123',
+    organizationId: 'org-fitprime',
+  },
+  {
+    role: 'admin',
+    name: 'Admin Xbelt',
+    email: 'admin@xbelt.com',
+    password: 'admin123',
+    organizationId: 'org-fitprime',
+  },
+  {
+    role: 'admin',
+    name: 'Gestor FitPrime',
+    email: 'gestor@fitprime.com',
+    password: 'gestor123',
+    organizationId: 'org-fitprime',
+  },
+  {
+    role: 'student',
+    name: 'Marina Costa',
+    email: 'marina@exemplo.com',
+    password: 'aluno123',
+    organizationId: 'org-fitprime',
+    studentEmail: 'marina@exemplo.com',
+  },
+  {
+    role: 'student',
+    name: 'Rafael Siqueira',
+    email: 'rafael@exemplo.com',
+    password: 'aluno123',
+    organizationId: 'org-crosszone',
+    studentEmail: 'rafael@exemplo.com',
+  },
+];
+
+const initialLeadRecords: LeadRecord[] = [
+  {
+    id: 'lead-001',
+    name: 'Renata Alves',
+    email: 'renata@studioflow.com',
+    phone: '(11) 94444-1100',
+    businessType: 'Estudio',
+    teamSize: '1 unidade',
+    message: 'Quero organizar agenda, contratos e pagamentos recorrentes.',
+    status: 'Demo agendada',
+    createdAt: 'Hoje',
+  },
+  {
+    id: 'lead-002',
+    name: 'Marcos Prado',
+    email: 'marcos@fightcenter.com',
+    phone: '(31) 93333-2200',
+    businessType: 'Academia de artes marciais',
+    teamSize: '2 a 5 unidades',
+    message: 'Preciso controlar turmas, faixas e inadimplencia.',
+    status: 'Novo',
+    createdAt: 'Ontem',
   },
 ];
 
@@ -643,6 +727,10 @@ const emptyOrganization: OrganizationPayload = {
 
 function App() {
   const [page, setPage] = useState<Page>('marketing');
+  const [session, setSession] = useState<DemoSession | null>(null);
+  const [loginMode, setLoginMode] = useState<LoginMode>('admin');
+  const [loginForm, setLoginForm] = useState({ email: 'admin@xbelt.com', password: 'admin123' });
+  const [loginError, setLoginError] = useState('');
   const [activeFeature, setActiveFeature] = useState(featureTabs[0].key);
   const [activeModule, setActiveModule] = useState<ModuleKey>('overview');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -651,6 +739,7 @@ function App() {
   const [lead, setLead] = useState<DemoLead>(emptyLead);
   const [leadState, setLeadState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [leadMessage, setLeadMessage] = useState('');
+  const [leadRecords, setLeadRecords] = useState<LeadRecord[]>(initialLeadRecords);
   const [organizations, setOrganizations] = useState<Organization[]>(initialOrganizations);
   const [locations, setLocations] = useState<Location[]>(initialLocations);
   const [selectedOrganizationId, setSelectedOrganizationId] = useState(initialOrganizations[0].id);
@@ -682,6 +771,60 @@ function App() {
 
   const SelectedFeatureIcon = selectedFeature.icon;
 
+  function openLogin(mode: LoginMode) {
+    setLoginMode(mode);
+    setLoginError('');
+    setLoginForm(
+      mode === 'xbeltAdmin'
+        ? { email: 'super@xbelt.com', password: 'xbelt123' }
+        : mode === 'admin'
+        ? { email: 'admin@xbelt.com', password: 'admin123' }
+        : { email: 'marina@exemplo.com', password: 'aluno123' },
+    );
+    setPage('login');
+  }
+
+  function completeLogin(account: DemoAccount) {
+    const { password: _password, ...safeSession } = account;
+    setSession(safeSession);
+    setSelectedOrganizationId(account.organizationId);
+    setLoginError('');
+
+    if (account.role === 'xbeltAdmin') {
+      setPage('xbeltAdmin');
+      return;
+    }
+
+    if (account.role === 'admin') {
+      setActiveModule('overview');
+      setPage('dashboard');
+      return;
+    }
+
+    setPage('studentPortal');
+  }
+
+  function handleLogin(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const account = demoAccounts.find(
+      (item) =>
+        item.email.toLowerCase() === loginForm.email.trim().toLowerCase() &&
+        item.password === loginForm.password,
+    );
+
+    if (!account) {
+      setLoginError('Credenciais invalidas para este tipo de acesso.');
+      return;
+    }
+
+    completeLogin(account);
+  }
+
+  function handleLogout() {
+    setSession(null);
+    setPage('marketing');
+  }
+
   function scrollToSection(id: string) {
     setPage('marketing');
     setMenuOpen(false);
@@ -703,11 +846,34 @@ function App() {
           ? 'Lead salvo em modo demonstracao. Configure o Supabase para persistir no banco.'
           : 'Solicitacao recebida. Um consultor pode seguir o fluxo pelo painel.',
       );
+      setLeadRecords((current) => [
+        {
+          ...lead,
+          id: crypto.randomUUID(),
+          status: 'Novo',
+          createdAt: 'Agora',
+        },
+        ...current,
+      ]);
       setLead(emptyLead);
     } catch (error) {
       setLeadState('error');
       setLeadMessage(error instanceof Error ? error.message : 'Nao foi possivel enviar o formulario.');
     }
+  }
+
+  function updateLeadStatus(id: string, status: LeadRecord['status']) {
+    setLeadRecords((current) =>
+      current.map((record) => (record.id === id ? { ...record, status } : record)),
+    );
+  }
+
+  function updateOrganizationStatus(id: string, status: Organization['status']) {
+    setOrganizations((current) =>
+      current.map((organization) =>
+        organization.id === id ? { ...organization, status } : organization,
+      ),
+    );
   }
 
   async function handleStudentSubmit(event: FormEvent<HTMLFormElement>) {
@@ -784,7 +950,66 @@ function App() {
     }
   }
 
+  if (page === 'login') {
+    return (
+      <LoginPage
+        completeLogin={completeLogin}
+        handleLogin={handleLogin}
+        loginError={loginError}
+        loginForm={loginForm}
+        loginMode={loginMode}
+        openLogin={openLogin}
+        setLoginForm={setLoginForm}
+        setPage={setPage}
+      />
+    );
+  }
+
+  if (page === 'xbeltAdmin') {
+    if (!session || session.role !== 'xbeltAdmin') {
+      return (
+        <LoginPage
+          completeLogin={completeLogin}
+          handleLogin={handleLogin}
+          loginError={loginError}
+          loginForm={loginForm}
+          loginMode="xbeltAdmin"
+          openLogin={openLogin}
+          setLoginForm={setLoginForm}
+          setPage={setPage}
+        />
+      );
+    }
+
+    return (
+      <XbeltAdminPanel
+        handleLogout={handleLogout}
+        leadRecords={leadRecords}
+        organizations={organizations}
+        setPage={setPage}
+        students={students}
+        updateLeadStatus={updateLeadStatus}
+        updateOrganizationStatus={updateOrganizationStatus}
+      />
+    );
+  }
+
   if (page === 'dashboard') {
+    if (!session || (session.role !== 'admin' && session.role !== 'xbeltAdmin')) {
+      return (
+        <LoginPage
+          completeLogin={completeLogin}
+          handleLogin={handleLogin}
+          loginError={loginError}
+          loginForm={loginForm}
+          loginMode="admin"
+          openLogin={openLogin}
+          setLoginForm={setLoginForm}
+          setPage={setPage}
+        />
+      );
+    }
+
     return (
       <Dashboard
         activeModule={activeModule}
@@ -793,8 +1018,10 @@ function App() {
         filteredStudents={filteredStudents}
         handleAcademySubmit={handleAcademySubmit}
         handleStudentSubmit={handleStudentSubmit}
+        handleLogout={handleLogout}
         locations={locations}
         organizations={organizations}
+        session={session}
         selectedOrganization={selectedOrganization}
         selectedOrganizationId={selectedOrganizationId}
         setActiveModule={setActiveModule}
@@ -812,10 +1039,27 @@ function App() {
   }
 
   if (page === 'studentPortal') {
+    if (!session) {
+      return (
+        <LoginPage
+          completeLogin={completeLogin}
+          handleLogin={handleLogin}
+          loginError={loginError}
+          loginForm={loginForm}
+          loginMode="student"
+          openLogin={openLogin}
+          setLoginForm={setLoginForm}
+          setPage={setPage}
+        />
+      );
+    }
+
     return (
       <StudentPortal
+        handleLogout={handleLogout}
         organizations={organizations}
         selectedOrganization={selectedOrganization}
+        session={session}
         setPage={setPage}
         students={students}
       />
@@ -872,10 +1116,13 @@ function App() {
           </div>
 
           <div className="nav-actions">
-            <button className="ghost-action" onClick={() => setPage('dashboard')}>
+            <button className="ghost-action" onClick={() => openLogin('xbeltAdmin')}>
+              Admin Xbelt
+            </button>
+            <button className="ghost-action" onClick={() => openLogin('admin')}>
               Ja sou cliente
             </button>
-            <button className="ghost-action" onClick={() => setPage('studentPortal')}>
+            <button className="ghost-action" onClick={() => openLogin('student')}>
               Portal do aluno
             </button>
             <button className="primary-action" onClick={() => scrollToSection('demo')}>
@@ -916,11 +1163,11 @@ function App() {
                 Agendar demonstracao
                 <ArrowRight size={18} />
               </button>
-              <button className="secondary-action large" onClick={() => setPage('dashboard')}>
+              <button className="secondary-action large" onClick={() => openLogin('admin')}>
                 Painel de gestao
                 <PlayCircle size={18} />
               </button>
-              <button className="secondary-action large" onClick={() => setPage('studentPortal')}>
+              <button className="secondary-action large" onClick={() => openLogin('student')}>
                 Portal do aluno
                 <Smartphone size={18} />
               </button>
@@ -1505,6 +1752,265 @@ function SectionHeader({ eyebrow, title, text }: { eyebrow: string; title: strin
   );
 }
 
+function LoginPage({
+  completeLogin,
+  handleLogin,
+  loginError,
+  loginForm,
+  loginMode,
+  openLogin,
+  setLoginForm,
+  setPage,
+}: {
+  completeLogin: (account: DemoAccount) => void;
+  handleLogin: (event: FormEvent<HTMLFormElement>) => void;
+  loginError: string;
+  loginForm: { email: string; password: string };
+  loginMode: LoginMode;
+  openLogin: (mode: LoginMode) => void;
+  setLoginForm: (form: { email: string; password: string }) => void;
+  setPage: (page: Page) => void;
+}) {
+  const modeTitle =
+    loginMode === 'xbeltAdmin'
+      ? 'Admin Xbelt'
+      : loginMode === 'admin'
+        ? 'Painel gestor'
+        : 'Portal do aluno';
+  const accounts = demoAccounts.filter((account) => account.role === loginMode);
+
+  return (
+    <div className="login-page">
+      <button className="brand login-brand" onClick={() => setPage('marketing')}>
+        <img src={logoUrl} alt="Xbelt" />
+        <span>Xbelt</span>
+      </button>
+      <section className="login-shell">
+        <div className="login-copy">
+          <span className="section-kicker">Acesso demo funcional</span>
+          <h1>{modeTitle}</h1>
+          <p>
+            Use uma credencial demo ou clique em um acesso rapido. O demo separa plataforma,
+            gestor da academia e aluno com permissoes diferentes.
+          </p>
+          <div className="login-mode-tabs">
+            <button className={loginMode === 'xbeltAdmin' ? 'active' : ''} onClick={() => openLogin('xbeltAdmin')}>
+              Admin Xbelt
+            </button>
+            <button className={loginMode === 'admin' ? 'active' : ''} onClick={() => openLogin('admin')}>
+              Gestor
+            </button>
+            <button className={loginMode === 'student' ? 'active' : ''} onClick={() => openLogin('student')}>
+              Aluno
+            </button>
+          </div>
+          <div className="credential-grid">
+            {accounts.map((account) => (
+              <button key={account.email} onClick={() => completeLogin(account)}>
+                <strong>{account.name}</strong>
+                <span>{account.email}</span>
+                <em>{account.password}</em>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <form className="login-form" onSubmit={handleLogin}>
+          <h2>Entrar</h2>
+          <label>
+            E-mail
+            <input
+              required
+              type="email"
+              value={loginForm.email}
+              onChange={(event) => setLoginForm({ ...loginForm, email: event.target.value })}
+            />
+          </label>
+          <label>
+            Senha
+            <input
+              required
+              type="password"
+              value={loginForm.password}
+              onChange={(event) => setLoginForm({ ...loginForm, password: event.target.value })}
+            />
+          </label>
+          <button className="primary-action large">Entrar no {modeTitle}</button>
+          {loginError && <p className="form-message error">{loginError}</p>}
+          <p>
+            Em producao, este login deve usar Supabase Auth. As senhas acima existem somente para
+            demonstracao local.
+          </p>
+        </form>
+      </section>
+    </div>
+  );
+}
+
+function XbeltAdminPanel({
+  handleLogout,
+  leadRecords,
+  organizations,
+  setPage,
+  students,
+  updateLeadStatus,
+  updateOrganizationStatus,
+}: {
+  handleLogout: () => void;
+  leadRecords: LeadRecord[];
+  organizations: Organization[];
+  setPage: (page: Page) => void;
+  students: Student[];
+  updateLeadStatus: (id: string, status: LeadRecord['status']) => void;
+  updateOrganizationStatus: (id: string, status: Organization['status']) => void;
+}) {
+  return (
+    <div className="admin-console">
+      <aside className="sidebar">
+        <button className="brand dashboard-brand" onClick={() => setPage('marketing')}>
+          <img src={logoUrl} alt="Xbelt" />
+          <span>Admin Xbelt</span>
+        </button>
+        <div className="workspace-switcher">
+          <ShieldCheck size={18} />
+          <div>
+            <strong>Plataforma</strong>
+            <span>Super admin</span>
+          </div>
+        </div>
+        <nav>
+          {['Clientes', 'Leads', 'Assinaturas', 'Suporte', 'Deploy'].map((item) => (
+            <button key={item}>
+              <Settings size={18} />
+              {item}
+            </button>
+          ))}
+        </nav>
+        <button className="secondary-action" onClick={handleLogout}>
+          Sair
+        </button>
+      </aside>
+
+      <main className="dashboard-main">
+        <header className="dashboard-topbar">
+          <div>
+            <span className="section-kicker">Admin da plataforma</span>
+            <h1>
+              <ShieldCheck size={28} />
+              Xbelt Admin
+            </h1>
+            <p className="dashboard-userline">Gerencie clientes, leads, assinaturas e operacao da plataforma.</p>
+          </div>
+          <div className="topbar-actions">
+            <button className="primary-action" onClick={() => setPage('dashboard')}>
+              Abrir gestor
+            </button>
+            <button className="secondary-action" onClick={() => setPage('studentPortal')}>
+              Ver portal aluno
+            </button>
+          </div>
+        </header>
+
+        <section className="dashboard-content">
+          <div className="metric-grid">
+            <MetricCard icon={Building2} label="Academias clientes" value={`${organizations.length}`} change="ativas/demo" />
+            <MetricCard icon={Users} label="Alunos geridos" value={`${students.length}`} change="multiacademia" />
+            <MetricCard icon={CircleDollarSign} label="MRR demo" value="R$ 8.720" change="+18%" />
+            <MetricCard icon={MessageCircle} label="Leads comerciais" value={`${leadRecords.length}`} change="site" />
+          </div>
+
+          <div className="dashboard-grid two-columns">
+            <article className="panel table-panel">
+              <PanelHeader icon={Building2} title="Clientes Xbelt" action="Tenant admin" />
+              <div className="responsive-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Academia</th>
+                      <th>Tipo</th>
+                      <th>Responsavel</th>
+                      <th>Status</th>
+                      <th>Acoes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {organizations.map((organization) => (
+                      <tr key={organization.id}>
+                        <td>
+                          <strong>{organization.name}</strong>
+                          <span>{organization.email}</span>
+                        </td>
+                        <td>{organization.businessType}</td>
+                        <td>{organization.ownerName}</td>
+                        <td>
+                          <span className="status-pill ativo">{organization.status}</span>
+                        </td>
+                        <td>
+                          <button
+                            className="table-action"
+                            onClick={() =>
+                              updateOrganizationStatus(
+                                organization.id,
+                                organization.status === 'Ativa' ? 'Trial' : 'Ativa',
+                              )
+                            }
+                          >
+                            {organization.status === 'Ativa' ? 'Trial' : 'Ativar'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <article className="panel">
+              <PanelHeader icon={MessageCircle} title="Leads da landing" action="CRM" />
+              <div className="lead-admin-list">
+                {leadRecords.map((leadItem) => (
+                  <div key={leadItem.id}>
+                    <strong>{leadItem.name}</strong>
+                    <span>
+                      {leadItem.businessType} · {leadItem.teamSize} · {leadItem.createdAt}
+                    </span>
+                    <em>{leadItem.status}</em>
+                    <button
+                      onClick={() =>
+                        updateLeadStatus(
+                          leadItem.id,
+                          leadItem.status === 'Novo' ? 'Contato feito' : 'Demo agendada',
+                        )
+                      }
+                    >
+                      Avancar
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </article>
+          </div>
+
+          <div className="admin-ops-grid">
+            {[
+              ['Assinaturas', 'Planos Start, Scale e Network com status de cobranca e tenant.'],
+              ['Suporte', 'Tickets por academia com prioridade, dono e SLA.'],
+              ['Deploy', 'Variaveis Vercel, status Supabase e checklist de producao.'],
+              ['Permissoes', 'Perfis de super admin, gestor, recepcao, instrutor e aluno.'],
+            ].map(([title, text]) => (
+              <article className="panel" key={title}>
+                <PanelHeader icon={Settings} title={title} action="Configurar" />
+                <p>{text}</p>
+                <button className="primary-action">Executar acao demo</button>
+              </article>
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
+
 function AppCard({
   badge,
   title,
@@ -1551,11 +2057,13 @@ function Dashboard({
   academyState,
   filteredStudents,
   handleAcademySubmit,
+  handleLogout,
   handleStudentSubmit,
   locations,
   organizations,
   selectedOrganization,
   selectedOrganizationId,
+  session,
   setActiveModule,
   setAcademyForm,
   setPage,
@@ -1572,11 +2080,13 @@ function Dashboard({
   academyState: 'idle' | 'loading' | 'success' | 'error';
   filteredStudents: Student[];
   handleAcademySubmit: (event: FormEvent<HTMLFormElement>) => void;
+  handleLogout: () => void;
   handleStudentSubmit: (event: FormEvent<HTMLFormElement>) => void;
   locations: Location[];
   organizations: Organization[];
   selectedOrganization: Organization;
   selectedOrganizationId: string;
+  session: DemoSession;
   setActiveModule: (module: ModuleKey) => void;
   setAcademyForm: (academy: OrganizationPayload) => void;
   setPage: (page: Page) => void;
@@ -1647,6 +2157,9 @@ function Dashboard({
               <ActiveIcon size={28} />
               {modules.find((item) => item.key === activeModule)?.label}
             </h1>
+            <p className="dashboard-userline">
+              Logado como {session.name} · {session.email}
+            </p>
           </div>
           <div className="topbar-actions">
             <button className="icon-button" title="Pesquisar" aria-label="Pesquisar">
@@ -1662,6 +2175,9 @@ function Dashboard({
             <button className="secondary-action" onClick={() => setPage('studentPortal')}>
               <Smartphone size={17} />
               Portal do aluno
+            </button>
+            <button className="secondary-action" onClick={handleLogout}>
+              Sair
             </button>
           </div>
         </header>
@@ -2209,6 +2725,21 @@ function StudentsModule({
 }
 
 function ScheduleModule() {
+  const [sessions, setSessions] = useState(classSchedule);
+  const [message, setMessage] = useState('');
+
+  function createClass() {
+    const next = {
+      time: '21:00',
+      className: `Aula extra ${sessions.length + 1}`,
+      coach: 'Equipe',
+      spots: '0/18',
+      room: 'Sala premium',
+    };
+    setSessions((current) => [next, ...current]);
+    setMessage('Aula extra criada na grade da academia.');
+  }
+
   return (
     <div className="dashboard-content">
       <div className="metric-grid">
@@ -2218,9 +2749,10 @@ function ScheduleModule() {
         <MetricCard icon={Bell} label="Lembretes enviados" value="412" change="SMS + WhatsApp" />
       </div>
       <article className="panel">
-        <PanelHeader icon={CalendarCheck} title="Grade operacional" action="Criar aula" />
+        <PanelHeader icon={CalendarCheck} title="Grade operacional" action="Criar aula" onAction={createClass} />
+        {message && <p className="module-feedback">{message}</p>}
         <div className="schedule-board">
-          {classSchedule.map((item) => (
+          {sessions.map((item) => (
             <div className="schedule-card" key={`${item.time}-${item.className}`}>
               <strong>{item.time}</strong>
               <h3>{item.className}</h3>
@@ -2228,7 +2760,7 @@ function ScheduleModule() {
                 {item.coach} · {item.room}
               </p>
               <span>{item.spots} vagas</span>
-              <button>Gerenciar</button>
+              <button onClick={() => setMessage(`${item.className} selecionada para gestao.`)}>Gerenciar</button>
             </div>
           ))}
         </div>
@@ -2238,6 +2770,20 @@ function ScheduleModule() {
 }
 
 function FinanceModule() {
+  const [financeInvoices, setFinanceInvoices] = useState(invoices);
+  const [message, setMessage] = useState('');
+
+  function chargeOpenInvoices() {
+    setFinanceInvoices((current) =>
+      current.map((invoice) =>
+        invoice.status === 'Aberto' || invoice.status === 'Atrasado'
+          ? { ...invoice, status: 'Pago' }
+          : invoice,
+      ),
+    );
+    setMessage('Faturas abertas foram marcadas como cobradas/pagas no demo.');
+  }
+
   return (
     <div className="dashboard-content">
       <div className="metric-grid">
@@ -2263,9 +2809,10 @@ function FinanceModule() {
           </div>
         </article>
         <article className="panel">
-          <PanelHeader icon={Receipt} title="Ultimas faturas" action="Cobrar" />
+          <PanelHeader icon={Receipt} title="Ultimas faturas" action="Cobrar" onAction={chargeOpenInvoices} />
+          {message && <p className="module-feedback">{message}</p>}
           <div className="invoice-list">
-            {invoices.map((invoice) => (
+            {financeInvoices.map((invoice) => (
               <div key={invoice.id}>
                 <strong>{invoice.client}</strong>
                 <span>
@@ -2283,6 +2830,22 @@ function FinanceModule() {
 }
 
 function WorkoutsModule() {
+  const [workoutList, setWorkoutList] = useState(workouts);
+  const [message, setMessage] = useState('');
+
+  function createWorkout() {
+    setWorkoutList((current) => [
+      {
+        title: `Treino novo ${current.length + 1}`,
+        students: 0,
+        focus: 'Modelo criado pelo gestor',
+        updated: 'Agora',
+      },
+      ...current,
+    ]);
+    setMessage('Novo modelo de treino criado.');
+  }
+
   return (
     <div className="dashboard-content">
       <div className="metric-grid">
@@ -2291,8 +2854,10 @@ function WorkoutsModule() {
         <MetricCard icon={PlayCircle} label="Videos prescritos" value="1.426" change="biblioteca" />
         <MetricCard icon={Users} label="Feedbacks de esforco" value="684" change="RPE semanal" />
       </div>
+      <button className="primary-action module-action" onClick={createWorkout}>Criar modelo de treino</button>
+      {message && <p className="module-feedback">{message}</p>}
       <div className="workout-grid">
-        {workouts.map((workout) => (
+        {workoutList.map((workout) => (
           <article className="panel workout-card" key={workout.title}>
             <PanelHeader icon={Dumbbell} title={workout.title} action={workout.updated} />
             <p>{workout.focus}</p>
@@ -2310,6 +2875,19 @@ function WorkoutsModule() {
 }
 
 function AssessmentsModule() {
+  const [queue, setQueue] = useState([
+    'Bioimpedancia vencendo',
+    'Reavaliacao pos 30 dias',
+    'Fotos comparativas',
+    'Anamnese incompleta',
+  ]);
+  const [message, setMessage] = useState('');
+
+  function scheduleAssessment() {
+    setQueue((current) => ['Avaliacao criada agora', ...current]);
+    setMessage('Nova avaliacao fisica entrou na fila.');
+  }
+
   return (
     <div className="dashboard-content">
       <div className="assessment-grid">
@@ -2322,9 +2900,10 @@ function AssessmentsModule() {
         ))}
       </div>
       <article className="panel">
-        <PanelHeader icon={ClipboardCheck} title="Fila de avaliacoes fisicas" action="Agendar" />
+        <PanelHeader icon={ClipboardCheck} title="Fila de avaliacoes fisicas" action="Agendar" onAction={scheduleAssessment} />
+        {message && <p className="module-feedback">{message}</p>}
         <div className="timeline">
-          {['Bioimpedancia vencendo', 'Reavaliacao pos 30 dias', 'Fotos comparativas', 'Anamnese incompleta'].map(
+          {queue.map(
             (item, index) => (
               <div key={item}>
                 <span>{index + 1}</span>
@@ -2342,6 +2921,13 @@ function AssessmentsModule() {
 }
 
 function ContractsModule() {
+  const [rules, setRules] = useState([
+    'Enviar contrato digital apos venda aprovada',
+    'Avisar consultor 10 dias antes do vencimento',
+    'Tentar cobranca recorrente em 3 janelas',
+    'Gerar tarefa de retencao para contrato cancelado',
+  ]);
+
   return (
     <div className="dashboard-content">
       <div className="plans-grid">
@@ -2357,14 +2943,14 @@ function ContractsModule() {
         ))}
       </div>
       <article className="panel">
-        <PanelHeader icon={FileText} title="Automacoes de contrato" action="Nova regra" />
+        <PanelHeader
+          icon={FileText}
+          title="Automacoes de contrato"
+          action="Nova regra"
+          onAction={() => setRules((current) => ['Nova regra criada no demo', ...current])}
+        />
         <div className="automation-list">
-          {[
-            'Enviar contrato digital apos venda aprovada',
-            'Avisar consultor 10 dias antes do vencimento',
-            'Tentar cobranca recorrente em 3 janelas',
-            'Gerar tarefa de retencao para contrato cancelado',
-          ].map((item) => (
+          {rules.map((item) => (
             <span key={item}>
               <Zap size={17} />
               {item}
@@ -2377,13 +2963,26 @@ function ContractsModule() {
 }
 
 function SalesModule() {
+  const [pipeline, setPipeline] = useState(salesPipeline);
+  const [message, setMessage] = useState('');
+
+  function publishOffer() {
+    setPipeline((current) =>
+      current.map((stage, index) =>
+        index === 0 ? { ...stage, count: stage.count + 1, amount: 'R$ 33 mil' } : stage,
+      ),
+    );
+    setMessage('Pagina de venda publicada e novo lead entrou no funil.');
+  }
+
   return (
     <div className="dashboard-content">
       <div className="dashboard-grid two-columns">
         <article className="panel large-panel">
-          <PanelHeader icon={ShoppingCart} title="Funil de vendas" action="Publicar pagina" />
+          <PanelHeader icon={ShoppingCart} title="Funil de vendas" action="Publicar pagina" onAction={publishOffer} />
+          {message && <p className="module-feedback">{message}</p>}
           <div className="pipeline">
-            {salesPipeline.map((stage) => (
+            {pipeline.map((stage) => (
               <div key={stage.stage}>
                 <strong>{stage.count}</strong>
                 <span>{stage.stage}</span>
@@ -2398,7 +2997,7 @@ function SalesModule() {
           <p>
             Monte paginas por modalidade, conecte checkout e acompanhe origem do lead ate o contrato.
           </p>
-          <button className="primary-action">Configurar checkout</button>
+          <button className="primary-action" onClick={publishOffer}>Configurar checkout</button>
         </article>
       </div>
     </div>
@@ -2406,6 +3005,16 @@ function SalesModule() {
 }
 
 function RelationshipModule() {
+  const [message, setMessage] = useState('');
+  const [segments, setSegments] = useState([
+    'Aniversariantes da semana',
+    'Sem check-in ha 14 dias',
+    'Trial sem compra',
+    'Contrato anual a vencer',
+    'Alunos com treino sem feedback',
+    'Leads de aula experimental',
+  ]);
+
   return (
     <div className="dashboard-content">
       <div className="metric-grid">
@@ -2415,17 +3024,19 @@ function RelationshipModule() {
         <MetricCard icon={Star} label="NPS" value="74" change="+8 pontos" />
       </div>
       <article className="panel">
-        <PanelHeader icon={Megaphone} title="Segmentos inteligentes" action="Nova campanha" />
+        <PanelHeader
+          icon={Megaphone}
+          title="Segmentos inteligentes"
+          action="Nova campanha"
+          onAction={() => {
+            setSegments((current) => ['Campanha criada agora', ...current]);
+            setMessage('Campanha criada e pronta para envio.');
+          }}
+        />
+        {message && <p className="module-feedback">{message}</p>}
         <div className="segment-grid">
-          {[
-            'Aniversariantes da semana',
-            'Sem check-in ha 14 dias',
-            'Trial sem compra',
-            'Contrato anual a vencer',
-            'Alunos com treino sem feedback',
-            'Leads de aula experimental',
-          ].map((segment) => (
-            <button key={segment}>{segment}</button>
+          {segments.map((segment) => (
+            <button key={segment} onClick={() => setMessage(`${segment}: segmento selecionado.`)}>{segment}</button>
           ))}
         </div>
       </article>
@@ -2434,15 +3045,20 @@ function RelationshipModule() {
 }
 
 function ReportsModule() {
+  const [generated, setGenerated] = useState<string[]>([]);
+
   return (
     <div className="dashboard-content">
+      {generated.length > 0 && (
+        <p className="module-feedback">Relatorios gerados: {generated.join(', ')}</p>
+      )}
       <div className="reports-grid">
         {reports.map((report) => (
           <article className="panel report-card" key={report.title}>
             <FileText size={24} />
             <h3>{report.title}</h3>
             <p>{report.text}</p>
-            <button>Gerar relatorio</button>
+            <button onClick={() => setGenerated((current) => [report.title, ...current])}>Gerar relatorio</button>
           </article>
         ))}
       </div>
@@ -2490,13 +3106,17 @@ function SettingsModule() {
 }
 
 function StudentPortal({
+  handleLogout,
   organizations,
   selectedOrganization,
+  session,
   setPage,
   students,
 }: {
+  handleLogout: () => void;
   organizations: Organization[];
   selectedOrganization: Organization;
+  session: DemoSession;
   setPage: (page: Page) => void;
   students: Student[];
 }) {
@@ -2504,8 +3124,10 @@ function StudentPortal({
     (student) => student.organizationId === selectedOrganization.id,
   );
   const [selectedEmail, setSelectedEmail] = useState(
-    organizationStudents[0]?.email ?? students[0]?.email ?? '',
+    session.studentEmail ?? organizationStudents[0]?.email ?? students[0]?.email ?? '',
   );
+  const [activePortalTab, setActivePortalTab] = useState('Resumo');
+  const [portalMessage, setPortalMessage] = useState('');
   const selectedStudent =
     students.find((student) => student.email === selectedEmail) ?? organizationStudents[0] ?? students[0];
   const studentOrganization =
@@ -2545,7 +3167,11 @@ function StudentPortal({
         <nav>
           {portalNav.map(({ label, icon: PortalIcon }) => {
             return (
-              <button key={label}>
+              <button
+                className={activePortalTab === label ? 'active' : ''}
+                key={label}
+                onClick={() => setActivePortalTab(label)}
+              >
                 <PortalIcon size={18} />
                 {label}
               </button>
@@ -2554,6 +3180,9 @@ function StudentPortal({
         </nav>
         <button className="secondary-action" onClick={() => setPage('dashboard')}>
           Voltar ao painel
+        </button>
+        <button className="secondary-action" onClick={handleLogout}>
+          Sair
         </button>
       </aside>
 
@@ -2567,11 +3196,12 @@ function StudentPortal({
               {selectedStudent.goal}
             </p>
           </div>
-          <button className="primary-action">
+          <button className="primary-action" onClick={() => setPortalMessage('Check-in confirmado para hoje.')}>
             <QrCodeIcon />
             Check-in
           </button>
         </header>
+        {portalMessage && <p className="module-feedback">{portalMessage}</p>}
 
         <section className="student-metrics">
           <MetricCard icon={BadgeCheck} label="Plano ativo" value={selectedStudent.plan} change={selectedStudent.status} />
@@ -2581,8 +3211,13 @@ function StudentPortal({
         </section>
 
         <section className="student-grid">
-          <article className="panel student-workout">
-            <PanelHeader icon={Dumbbell} title="Treino atual" action="Abrir app" />
+          <article className={`panel student-workout ${activePortalTab === 'Treino' || activePortalTab === 'Resumo' ? '' : 'portal-muted-panel'}`}>
+            <PanelHeader
+              icon={Dumbbell}
+              title="Treino atual"
+              action="Abrir app"
+              onAction={() => setPortalMessage('Treino aberto no portal do aluno.')}
+            />
             <h2>{selectedStudent.goal === 'Hipertrofia' ? 'Hipertrofia A' : 'Performance base'}</h2>
             <p>
               O instrutor liberou a rotina da semana com controle de carga, descanso e registro de onde
@@ -2596,8 +3231,13 @@ function StudentPortal({
             </div>
           </article>
 
-          <article className="panel">
-            <PanelHeader icon={CalendarDays} title="Agenda do aluno" action="Remarcar" />
+          <article className={`panel ${activePortalTab === 'Agenda' || activePortalTab === 'Resumo' ? '' : 'portal-muted-panel'}`}>
+            <PanelHeader
+              icon={CalendarDays}
+              title="Agenda do aluno"
+              action="Remarcar"
+              onAction={() => setPortalMessage('Solicitacao de remarcacao enviada para a academia.')}
+            />
             <div className="schedule-list">
               {classSchedule.slice(0, 3).map((item) => (
                 <div className="schedule-row" key={`student-${item.time}`}>
@@ -2614,8 +3254,13 @@ function StudentPortal({
             </div>
           </article>
 
-          <article className="panel">
-            <PanelHeader icon={ClipboardCheck} title="Evolucao" action="Ver historico" />
+          <article className={`panel ${activePortalTab === 'Avaliacoes' || activePortalTab === 'Resumo' ? '' : 'portal-muted-panel'}`}>
+            <PanelHeader
+              icon={ClipboardCheck}
+              title="Evolucao"
+              action="Ver historico"
+              onAction={() => setPortalMessage('Historico de avaliacoes aberto.')}
+            />
             <div className="assessment-grid portal-assessments">
               {assessments.slice(0, 3).map((assessment) => (
                 <article className={`assessment-card ${assessment.tone}`} key={assessment.metric}>
@@ -2627,8 +3272,13 @@ function StudentPortal({
             </div>
           </article>
 
-          <article className="panel">
-            <PanelHeader icon={MessageCircle} title="Comunicados da academia" action="Responder" />
+          <article className={`panel ${activePortalTab === 'Comunicados' || activePortalTab === 'Financeiro' || activePortalTab === 'Resumo' ? '' : 'portal-muted-panel'}`}>
+            <PanelHeader
+              icon={MessageCircle}
+              title="Comunicados da academia"
+              action="Responder"
+              onAction={() => setPortalMessage('Resposta enviada para a recepcao.')}
+            />
             <div className="portal-messages">
               <div>
                 <strong>Renovacao de plano</strong>
@@ -2688,10 +3338,12 @@ function PanelHeader({
   icon: Icon,
   title,
   action,
+  onAction,
 }: {
   icon: LucideIcon;
   title: string;
   action: string;
+  onAction?: () => void;
 }) {
   return (
     <div className="panel-header">
@@ -2699,7 +3351,7 @@ function PanelHeader({
         <Icon size={20} />
         {title}
       </h2>
-      <button>{action}</button>
+      <button onClick={onAction}>{action}</button>
     </div>
   );
 }
