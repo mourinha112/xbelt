@@ -2122,6 +2122,605 @@ td span {
   line-height: 1.45;
 }
 
+/* Premium marketing skin */
+.marketing-page {
+  background: #08090c;
+  color: #f6f7f9;
+}
+
+.marketing-page .site-header {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  background: rgba(8, 9, 12, 0.92);
+}
+
+.marketing-page .promo-bar {
+  background: #e03131;
+  color: #fff;
+}
+
+.marketing-page .promo-bar span,
+.marketing-page .promo-bar strong {
+  color: #fff;
+}
+
+.marketing-page .promo-bar button {
+  border-color: rgba(255, 255, 255, 0.32);
+  background: #08090c;
+  color: #fff;
+}
+
+.marketing-page .brand,
+.marketing-page .ghost-action,
+.marketing-page .nav-links > button,
+.marketing-page .modality-menu > button {
+  color: #f7f8fb;
+}
+
+.marketing-page .nav-links > button,
+.marketing-page .modality-menu > button {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.marketing-page .nav-links > button:hover,
+.marketing-page .modality-menu > button:hover,
+.marketing-page .ghost-action:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.marketing-page .secondary-action {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.marketing-page .secondary-action:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+.marketing-page .icon-button {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.marketing-page .modality-popover {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: #111319;
+}
+
+.marketing-page .modality-popover button {
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.marketing-page .modality-popover button:hover {
+  background: rgba(224, 49, 49, 0.14);
+  color: #fff;
+}
+
+.marketing-page .section,
+.marketing-page .apps-section,
+.marketing-page .demo-section {
+  background: #08090c;
+}
+
+.marketing-page .section-header h2,
+.marketing-page .support-band h2,
+.marketing-page .demo-copy h2,
+.marketing-page .command-copy h2,
+.marketing-page .launch-panel h2 {
+  color: #fff;
+}
+
+.marketing-page .section-header p,
+.marketing-page .support-band p,
+.marketing-page .demo-copy p,
+.marketing-page .command-copy p,
+.marketing-page .launch-panel p {
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.hero-section {
+  position: relative;
+  display: block;
+  min-height: calc(100vh - 122px);
+  padding: clamp(54px, 7vw, 104px) clamp(18px, 5vw, 72px) clamp(70px, 9vw, 120px);
+  background:
+    linear-gradient(110deg, #08090c 0%, #0d0f15 44%, #1b090b 72%, #08090c 100%);
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.85) 52%, transparent 100%);
+  pointer-events: none;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+  padding-top: clamp(20px, 4vw, 46px);
+}
+
+.hero-copy h1 {
+  color: #fff;
+  text-shadow: 0 22px 54px rgba(224, 49, 49, 0.22);
+}
+
+.hero-subtitle {
+  max-width: 720px;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.hero-pills span {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.hero-pills svg {
+  color: #ff5b5b;
+}
+
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 660px;
+  margin-top: 28px;
+}
+
+.hero-metrics div {
+  min-height: 96px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.07);
+  padding: 16px;
+}
+
+.hero-metrics strong {
+  display: block;
+  color: #fff;
+  font-size: 2rem;
+}
+
+.hero-metrics span {
+  display: block;
+  margin-top: 6px;
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 800;
+}
+
+.product-visual {
+  position: absolute;
+  z-index: 1;
+  right: clamp(-220px, -8vw, -70px);
+  top: clamp(120px, 16vh, 190px);
+  width: min(760px, 56vw);
+  min-height: 610px;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: #101218;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55);
+  transform: rotate(-1.5deg);
+}
+
+.visual-toolbar {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  background: #171a22;
+}
+
+.visual-toolbar strong {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.visual-sidebar {
+  position: absolute;
+  top: 52px;
+  bottom: 0;
+  left: 0;
+  width: 74px;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 16px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0b0c10;
+  padding-top: 18px;
+}
+
+.visual-sidebar img {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius);
+  object-fit: cover;
+}
+
+.visual-sidebar span {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.visual-sidebar span:nth-child(2) {
+  background: var(--red);
+}
+
+.visual-grid {
+  margin-left: 74px;
+}
+
+.visual-card,
+.visual-panel,
+.visual-table {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: #151821;
+  color: #fff;
+}
+
+.visual-card.wide {
+  background: linear-gradient(135deg, #e03131, #7f1118);
+}
+
+.visual-card small,
+.visual-card span {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.visual-row {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.visual-table {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 8px;
+  padding: 14px;
+  border-radius: var(--radius);
+}
+
+.visual-table > div {
+  display: grid;
+  grid-template-columns: 1.2fr 0.7fr 0.7fr;
+  gap: 10px;
+  align-items: center;
+  min-height: 34px;
+  border-radius: 6px;
+  padding: 0 10px;
+}
+
+.visual-table > div:first-child {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.visual-table span {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.visual-table em {
+  width: max-content;
+  border-radius: 999px;
+  background: rgba(224, 49, 49, 0.22);
+  color: #ffb8b8;
+  padding: 5px 8px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.phone-preview {
+  border-color: #050609;
+  background: #11141b;
+  color: #fff;
+}
+
+.phone-preview span {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.stats-band {
+  background: #e03131;
+}
+
+.stat-card {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(8, 9, 12, 0.28);
+}
+
+.command-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(520px, 1.2fr);
+  gap: 24px;
+  align-items: stretch;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.command-copy {
+  display: grid;
+  align-content: center;
+}
+
+.command-copy h2,
+.launch-panel h2 {
+  margin: 10px 0 12px;
+  font-size: clamp(2.2rem, 5vw, 4.4rem);
+  line-height: 1;
+}
+
+.command-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.command-card {
+  min-height: 250px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  background: #12141b;
+  padding: 22px;
+}
+
+.command-card > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #ff5b5b;
+}
+
+.command-card > div strong {
+  color: #fff;
+  font-size: 1.8rem;
+}
+
+.command-card h3 {
+  margin: 42px 0 10px;
+  color: #fff;
+  font-size: 1.25rem;
+}
+
+.command-card p {
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.58;
+}
+
+.launch-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.88fr);
+  gap: 18px;
+  background: #0d0f15;
+}
+
+.launch-panel,
+.comparison-panel {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  background: #12141b;
+  padding: clamp(22px, 4vw, 34px);
+}
+
+.launch-checklist {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.launch-checklist span {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.82);
+  padding: 0 12px;
+  font-weight: 800;
+}
+
+.launch-checklist svg {
+  flex: 0 0 auto;
+  color: #ff5b5b;
+}
+
+.comparison-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.comparison-header,
+.comparison-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) 0.7fr 0.7fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.comparison-header {
+  min-height: 42px;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.comparison-row {
+  min-height: 58px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0 12px;
+}
+
+.comparison-row strong {
+  color: #fff;
+}
+
+.comparison-row span {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.comparison-row em {
+  width: max-content;
+  border-radius: 999px;
+  background: rgba(224, 49, 49, 0.22);
+  color: #ffb8b8;
+  padding: 6px 9px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.marketing-page .modality-card,
+.marketing-page .education-card,
+.marketing-page .testimonial-card,
+.marketing-page .mobile-app-card,
+.marketing-page .platform-card,
+.marketing-page .pricing-card,
+.marketing-page .feature-showcase,
+.marketing-page .demo-form,
+.marketing-page .faq-item {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: #12141b;
+  box-shadow: none;
+}
+
+.marketing-page .modality-card h3,
+.marketing-page .education-card h3,
+.marketing-page .testimonial-card strong,
+.marketing-page .mobile-app-card h3,
+.marketing-page .platform-card h3,
+.marketing-page .pricing-card strong,
+.marketing-page .feature-showcase h3,
+.marketing-page .faq-item button {
+  color: #fff;
+}
+
+.marketing-page .modality-card p,
+.marketing-page .education-card p,
+.marketing-page .testimonial-card p,
+.marketing-page .testimonial-card span,
+.marketing-page .mobile-app-card li,
+.marketing-page .platform-card p,
+.marketing-page .pricing-card p,
+.marketing-page .pricing-card li,
+.marketing-page .feature-showcase p,
+.marketing-page .faq-item p {
+  color: rgba(255, 255, 255, 0.64);
+}
+
+.marketing-page .platform-card,
+.marketing-page .modality-card,
+.marketing-page .pricing-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.marketing-page .platform-card::before,
+.marketing-page .modality-card::before,
+.marketing-page .pricing-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--red);
+}
+
+.marketing-page .platform-card svg,
+.marketing-page .modality-card svg,
+.marketing-page .education-card > svg,
+.marketing-page .report-card svg {
+  color: #ff5b5b;
+}
+
+.platform-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.platform-card {
+  min-height: 230px;
+}
+
+.feature-section,
+.pricing-section {
+  background: #0d0f15 !important;
+}
+
+.feature-tabs button {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: #12141b;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.feature-tabs button.active {
+  border-color: rgba(224, 49, 49, 0.5);
+  background: rgba(224, 49, 49, 0.18);
+  color: #fff;
+}
+
+.feature-dashboard {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #08090c;
+}
+
+.apps-section {
+  background: #08090c !important;
+}
+
+.app-phone {
+  border-color: #050609;
+  background: #0d0f15;
+  color: #fff;
+}
+
+.app-phone span {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.app-progress i {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.pricing-card button {
+  background: var(--red);
+}
+
+.support-band {
+  background:
+    linear-gradient(135deg, #08090c 0%, #18090b 58%, #e03131 160%);
+}
+
+.demo-section {
+  background: #0d0f15 !important;
+}
+
+.marketing-page label {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.marketing-page input,
+.marketing-page select,
+.marketing-page textarea {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: #08090c;
+  color: #fff;
+}
+
+.marketing-page input::placeholder,
+.marketing-page textarea::placeholder {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.chat-bubble {
+  background: var(--red);
+}
+
 .connection-status {
   display: flex;
   gap: 14px;
@@ -2166,7 +2765,13 @@ td span {
   }
 
   .product-visual {
+    position: relative;
+    right: auto;
+    top: auto;
+    width: 100%;
     min-height: 500px;
+    margin-top: 36px;
+    transform: none;
   }
 
   .stats-grid,
@@ -2184,6 +2789,8 @@ td span {
   .education-grid,
   .testimonial-grid,
   .support-cards,
+  .command-grid,
+  .launch-checklist,
   .segment-grid,
   .schema-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2192,7 +2799,9 @@ td span {
   .two-columns,
   .form-grid,
   .flow-layout,
-  .student-grid {
+  .student-grid,
+  .command-section,
+  .launch-section {
     grid-template-columns: 1fr;
   }
 
@@ -2310,6 +2919,8 @@ td span {
   .education-grid,
   .testimonial-grid,
   .support-cards,
+  .command-grid,
+  .launch-checklist,
   .metric-grid,
   .schedule-board,
   .workout-grid,
@@ -2325,6 +2936,25 @@ td span {
   .student-metrics,
   .student-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .visual-sidebar {
+    display: none;
+  }
+
+  .visual-grid {
+    margin-left: 0;
+  }
+
+  .comparison-header,
+  .comparison-row {
+    grid-template-columns: 1fr;
+    align-items: start;
+    padding: 12px;
   }
 
   .phone-preview {
@@ -2374,5 +3004,12 @@ td span {
   .student-hero {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media (max-width: 900px) {
+  .marketing-page .nav-links {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: #111319;
   }
 }

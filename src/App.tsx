@@ -547,6 +547,53 @@ const pricingPlans = [
   },
 ];
 
+const commandCenterItems = [
+  {
+    icon: Building2,
+    title: 'Academia configurada',
+    text: 'Dados fiscais, unidades, salas, equipe, permissoes e modalidades em uma base unica.',
+    status: '100%',
+  },
+  {
+    icon: Users,
+    title: 'Aluno vinculado',
+    text: 'Cada aluno pertence a uma academia, unidade, plano, contrato, treino e status financeiro.',
+    status: '1.842',
+  },
+  {
+    icon: WalletCards,
+    title: 'Financeiro conectado',
+    text: 'Recorrencia, PIX, boleto, caixa, inadimplencia, comissao e previsao de receita.',
+    status: 'R$ 134k',
+  },
+  {
+    icon: Dumbbell,
+    title: 'Treino e evolucao',
+    text: 'Prescricao, videos, cargas, RPE, avaliacao fisica e historico do aluno no portal.',
+    status: '9.840',
+  },
+];
+
+const launchChecklist = [
+  'Cadastro completo da academia e unidades',
+  'Planos, contratos, recorrencia e regras comerciais',
+  'Base de alunos ligada a academia correta',
+  'Agenda, turmas, check-in e lista de espera',
+  'Treinos, avaliacoes, videos e evolucao',
+  'Portal do aluno com financeiro, agenda e comunicados',
+  'CRM, funil de vendas e campanhas',
+  'Relatorios, permissoes e integracao Supabase',
+];
+
+const comparisonRows = [
+  { item: 'Cadastro de academia multiunidade', basic: 'Parcial', xbelt: 'Completo' },
+  { item: 'Aluno vinculado a unidade e contrato', basic: 'Manual', xbelt: 'Automatico' },
+  { item: 'Portal do aluno com treino e financeiro', basic: 'Limitado', xbelt: 'Incluso' },
+  { item: 'Gestao de recorrencia e inadimplencia', basic: 'Separado', xbelt: 'Integrado' },
+  { item: 'CRM, campanhas e risco de churn', basic: 'Nao tem', xbelt: 'Nativo' },
+  { item: 'Relatorios por unidade e modalidade', basic: 'Planilha', xbelt: 'Tempo real' },
+];
+
 const modules: { key: ModuleKey; label: string; icon: LucideIcon }[] = [
   { key: 'overview', label: 'Visao geral', icon: LayoutDashboard },
   { key: 'academy', label: 'Academia', icon: Building2 },
@@ -779,9 +826,9 @@ function App() {
     <div className="marketing-page">
       <header className="site-header">
         <div className="promo-bar">
-          <span>Barra promocional responsiva</span>
-          <strong>Diagnostico gratuito para negocios fitness</strong>
-          <button onClick={() => scrollToSection('demo')}>Faça uma demonstração gratuita</button>
+          <span>Implantacao premium para academias, estudios e boxes</span>
+          <strong>Gestao, vendas, treinos, financeiro e portal do aluno em uma plataforma</strong>
+          <button onClick={() => scrollToSection('demo')}>Agendar demonstracao</button>
         </div>
 
         <nav className="nav-shell" aria-label="Navegacao principal">
@@ -856,16 +903,17 @@ function App() {
           >
             <div className="eyebrow">
               <Sparkles size={16} />
-              O sistema favorito dos gestores do segmento fitness
+              Software premium para operacoes fitness
             </div>
             <h1>Xbelt</h1>
             <p className="hero-subtitle">
-              Plataforma premium para academias, estudios, boxes, pilates, lutas e quadras
-              venderem mais, reterem alunos e operarem com menos trabalho manual.
+              Cadastre academias, unidades, equipe e alunos; venda planos, controle contratos,
+              automatize financeiro, entregue treinos e libere um portal do aluno com experiencia
+              de aplicativo premium.
             </p>
             <div className="hero-actions">
               <button className="primary-action large" onClick={() => scrollToSection('demo')}>
-                Faça uma demonstração gratuita
+                Agendar demonstracao
                 <ArrowRight size={18} />
               </button>
               <button className="secondary-action large" onClick={() => setPage('dashboard')}>
@@ -878,12 +926,26 @@ function App() {
               </button>
             </div>
             <div className="hero-pills" aria-label="Diferenciais">
-              {['Facil de utilizar', 'Completo', 'Moderno', 'Inovador', 'Melhor preco'].map((item) => (
+              {['Multiunidade', 'Supabase ready', 'Portal do aluno', 'Financeiro completo', 'CRM fitness'].map((item) => (
                 <span key={item}>
                   <CheckCircle2 size={15} />
                   {item}
                 </span>
               ))}
+            </div>
+            <div className="hero-metrics">
+              <div>
+                <strong>12</strong>
+                <span>modulos nativos</span>
+              </div>
+              <div>
+                <strong>360</strong>
+                <span>visao da academia</span>
+              </div>
+              <div>
+                <strong>24h</strong>
+                <span>portal do aluno ativo</span>
+              </div>
             </div>
           </motion.div>
 
@@ -898,18 +960,25 @@ function App() {
               <span />
               <span />
               <span />
-              <strong>Xbelt OS</strong>
+              <strong>Xbelt Command Center</strong>
+            </div>
+            <div className="visual-sidebar">
+              <img src={logoUrl} alt="" />
+              <span />
+              <span />
+              <span />
+              <span />
             </div>
             <div className="visual-grid">
               <div className="visual-card wide">
                 <div>
-                  <small>Receita mensal</small>
+                  <small>Receita da academia</small>
                   <strong>R$ 134.200</strong>
                 </div>
                 <TrendingUp size={28} />
               </div>
               <div className="visual-card">
-                <small>Check-ins</small>
+                <small>Alunos ativos</small>
                 <strong>2.841</strong>
                 <div className="mini-bars">
                   <span />
@@ -937,6 +1006,28 @@ function App() {
                   <span>PIX recebido de Rafael Siqueira</span>
                 </div>
               </div>
+              <div className="visual-table">
+                <div>
+                  <strong>Aluno</strong>
+                  <strong>Plano</strong>
+                  <strong>Status</strong>
+                </div>
+                <div>
+                  <span>Marina Costa</span>
+                  <span>Black</span>
+                  <em>Ativo</em>
+                </div>
+                <div>
+                  <span>Rafael Siqueira</span>
+                  <span>Cross</span>
+                  <em>A vencer</em>
+                </div>
+                <div>
+                  <span>Bianca Torres</span>
+                  <span>Pilates</span>
+                  <em>Trial</em>
+                </div>
+              </div>
             </div>
             <div className="phone-preview">
               <div className="phone-notch" />
@@ -956,6 +1047,67 @@ function App() {
                 <strong>{stat.value}</strong>
                 <span>{stat.label}</span>
               </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="section command-section">
+          <div className="command-copy">
+            <span className="section-kicker">Centro de comando</span>
+            <h2>Uma operacao fitness inteira dentro do Xbelt</h2>
+            <p>
+              A landing agora mostra o produto como ele precisa ser vendido: academia cadastrada,
+              aluno ligado a unidade, painel para gestor, portal para aluno, financeiro, treinos,
+              avaliacoes, CRM e relatorios conectados.
+            </p>
+          </div>
+          <div className="command-grid">
+            {commandCenterItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <article key={item.title} className="command-card">
+                  <div>
+                    <Icon size={24} />
+                    <strong>{item.status}</strong>
+                  </div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="section launch-section">
+          <div className="launch-panel">
+            <span className="section-kicker">Escopo completo</span>
+            <h2>Pronto para vender como sistema de academia, nao como tela demo</h2>
+            <p>
+              O Xbelt apresenta o ciclo completo de implantacao: primeiro cria a academia, depois
+              configura unidade, planos, alunos, agenda, financeiro e portal. Isso deixa claro o
+              valor para gestor, instrutor, recepcao e aluno.
+            </p>
+            <div className="launch-checklist">
+              {launchChecklist.map((item) => (
+                <span key={item}>
+                  <CheckCircle2 size={17} />
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="comparison-panel">
+            <div className="comparison-header">
+              <span>Modulo</span>
+              <span>Basico</span>
+              <span>Xbelt</span>
+            </div>
+            {comparisonRows.map((row) => (
+              <div className="comparison-row" key={row.item}>
+                <strong>{row.item}</strong>
+                <span>{row.basic}</span>
+                <em>{row.xbelt}</em>
+              </div>
             ))}
           </div>
         </section>
